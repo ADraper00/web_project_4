@@ -1,0 +1,15 @@
+.content {
+  min-height: calc(100vh - 198px);
+}
+
+@media (max-width: 768px) {
+  .content {
+    min-height: calc(100vh - 160px);
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    min-height: calc(100vh - 120px);
+  }
+}
