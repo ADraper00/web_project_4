@@ -10,65 +10,65 @@
   </head>
   <body class="page">
     <header class="header">
-      <img src="./images/logo.png" alt="Around the U.S." class="logo" />
+      <img src="./images/logo.svg" alt="Around the U.S." class="header__logo" />
     </header>
     <main class="content">
       <section class="profile">
         <div class="profile__info-box">
           <img src="./images/jacques.jpg" alt="Jacques Cousteau" class="profile__avatar" />
           <div class="profile__text">
-            <div class="profile__text-top">
+            <div class="profile__text-container">
               <h1 class="profile__name">Jacques Cousteau</h1>
-              <button type="button" name="Edit profile" class="profile__edit-button" aria-label="Edit profile"></button>
+              <button type="button" class="profile__edit-button" aria-label="Edit profile"></button>
             </div>
             <p class="profile__title">Explorer</p>
           </div>
         </div>
-        <button type="button" name="Add image" class="profile__add-button" aria-label="Add image"></button>
+        <button type="button" class="profile__add-button" aria-label="Add image"></button>
       </section>
       <section class="cards">
-        <div class="card">
+        <article class="card">
           <img class="card__image" src="./images/Yosemite-valley.jpg" alt="Yosemite Valley" />
           <div class="card__content">
             <h2 class="card__title">Yosemite Valley</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__image" src="./images/lake-louise.jpg" alt="Lake Louise" />
           <div class="card__content">
             <h2 class="card__title">Lake Louise</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__image" src="./images/bald-mountains.jpg" alt="Bald Mountains" />
           <div class="card__content">
             <h2 class="card__title">Bald Mountains</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__image" src="./images/latemar.jpg" alt="Latemar" />
           <div class="card__content">
             <h2 class="card__title">Latemar</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <img class="card__image" src="./images/vanoise-national-park.jpg" alt="Vanoise National Park" />
           <div class="card__content">
             <h2 class="card__title">Vanoise National Park</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
-        <div class="card">
-          <img class="card__image" src="./images/lago-di-braies.jpg" alt="Lago Di Braies" />
+        </article>
+        <darticle class="card">
+          <img class="card__image" src="./images/lago-di-braies.jpg" alt="Lago di Braies" />
           <div class="card__content">
-            <h2 class="card__title">Lago Di Braies</h2>
-            <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+            <h2 class="card__title">Lago di Braies</h2>
+            <button type="button" class="card__heart" aria-label="Like photo"></button>
           </div>
-        </div>
+        </article>
       </section>
     </main>
     <footer class="footer">
@@ -76,11 +76,11 @@
     </footer>
     <div class="popup">
       <div class="popup__container">
-        <form action="#" name="Update profile" class="popup__form">
-          <h2 class="popup__header">Edit Profile</h2>
+        <form action="#" name="UpdateProfile" method="post" class="popup__form">
+          <h3 class="popup__header">Edit Profile</h3>
           <div class="popup__input-container">
-            <input type="text" id="name" name="name" placeholder="Name" class="popup__input popup__input_role_name" required />
-            <input type="text" id="title" name="title" placeholder="Title" class="popup__input popup__input_role_title" required />
+            <input type="text" name="name" placeholder="Name" class="popup__input popup__input_role_name" required />
+            <input type="text" name="aboutme" placeholder="About Me" class="popup__input popup__input_role_title" required />
           </div>
           <button type="submit" class="popup__save-button">Save</button>
         </form>
