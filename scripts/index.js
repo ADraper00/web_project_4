@@ -49,7 +49,7 @@ const initialCards = [
     },
 ];
 initialCards.forEach((place) => {
-  addPlace(place.name, place.link);
+    addPlace(place.name, place.link);
 });
 
 function updateProfile() {
@@ -62,6 +62,7 @@ function updateProfile() {
 function openPopup(popup) {
     popup.classList.add("popup_opened");
     document.addEventListener("keydown", closeWithEscape);
+    document.addEventListener("click", clickAway);
 }
 
 function editProfile() {
@@ -86,7 +87,7 @@ function createCard(title, link) {
     likeButton.addEventListener("click", (evt) => evt.target.classList.toggle("card__heart_liked"));
     const placeImage = newPlace.querySelector(".card__image");
     placeImage.addEventListener("click", openPreview);
-        newPlace.querySelector(".card__title").textContent = title;
+    newPlace.querySelector(".card__title").textContent = title;
     placeImage.src = link;
     placeImage.alt = `${title}`;
     return newPlace;
@@ -115,6 +116,7 @@ function closePopup() {
     const openPopup = document.querySelector(".popup_opened");
     openPopup.classList.remove("popup_opened");
     document.removeEventListener("keydown", closeWithEscape);
+    document.removeEventListener("click", clickAway);
 }
 
 function openPreview(evt) {
@@ -126,6 +128,11 @@ function openPreview(evt) {
 
 function closeWithEscape(evt) {
     if (evt.key === "Escape") {
+        closePopup();
+    }
+}
+function clickAway(evt) {
+    if (evt.target.classList.contains("popup_opened")) {
         closePopup();
     }
 }

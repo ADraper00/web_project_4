@@ -36,14 +36,18 @@
 
         <div class="popup popup_role_edit">
             <div class="popup__container">
-                <form action="#" name="UpdateProfile" method="post" class="popup__form popup__form_role_edit">
+                <form action="#" name="UpdateProfile" method="post" class="popup__form popup__form_role_edit" novalidate>
                     <h3 class="popup__header">Edit Profile</h3>
                     <div class="popup__input-container">
-                        <input type="text" name="name" placeholder="Name" class="popup__input popup__input_role_name" required />
-                        <input type="text" name="aboutme" placeholder="About Me" class="popup__input popup__input_role_title" required />
+                        <input type="text" id="name" name="name" placeholder="Name" class="popup__input popup__input_role_name" required minlength="2" maxlength="40" />
+                        <span class="popup__input-error popup__input-error_name"></span>
+
+                        <input type="text" id="title" name="aboutme" placeholder="About Me" class="popup__input popup__input_role_title" required minlength="2" maxlength="200" />
+                        <span class="popup__input-error popup__input-error_title"></span>
                     </div>
+
                     <button type="submit" class="popup__save-button popup__save-button_role_edit">
-                       Save
+                        Save
                     </button>
                 </form>
                 <button type="button" class="popup__close popup__close_role_edit" aria-label="Close"></button>
@@ -52,11 +56,14 @@
 
         <div class="popup popup_role_add">
             <div class="popup__container">
-                <form action="#" name="New place" class="popup__form popup__form_role_add">
+                <form action="#" name="New place" class="popup__form popup__form_role_add" novalidate>
                     <h2 class="popup__header">New place</h2>
                     <div class="popup__input-container">
-                        <input type="text" id="image-title" name="name" placeholder="Title" class="popup__input popup__input_role_image-title" required />
-                        <input type="url" id="image-link" name="title" placeholder="Image URL" class="popup__input popup__input_role_image-link" required />
+                        <input type="text" id="place" name="name" placeholder="Title" class="popup__input popup__input_role_image-title" required minlength="1" maxlength="30" />
+                        <span class="popup__input-error popup__input-error_place"></span>
+
+                        <input type="url" id="url" name="title" placeholder="Image link" class="popup__input popup__input_role_image-link" required />
+                        <span class="popup__input-error popup__input-error_url"></span>
                     </div>
                     <button type="submit" class="popup__save-button popup__save-button_role_add">
                         Create
@@ -88,5 +95,6 @@
         </template>
 
         <script src="./scripts/index.js"></script>
+        <script src="./scripts/validate.js"></script>
     </body>
 </html>

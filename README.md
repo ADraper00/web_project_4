@@ -2,7 +2,7 @@
 
 ### Overview
 
-This is the fourth Web Project for the Practicum Web Development bootcamp. This project uses basic Javascript, CSS and HTML.
+This is the fourth Web Project for the Practicum Web Development bootcamp. This project uses Javascript, CSS and HTML.
 
 **Figma**
 
