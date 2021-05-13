@@ -18,9 +18,8 @@ const imagePreview = document.querySelector(".popup_role_image");
 const closePreviewButton = document.querySelector(".popup__close_role_image");
 const popupImage = document.querySelector(".popup__image");
 const popupImageCaption = document.querySelector(".popup__caption");
-
-let profile = {};
-updateProfile();
+const addPopupSubmitButton = document.querySelector(".popup__save-button");
+const popupSubmitButton = document.querySelector(".popup__save-button_role_add");
 
 const initialCards = [
     {
@@ -67,6 +66,8 @@ function openPopup(popup) {
 
 function editProfile() {
     updateProfile();
+    addPopupSubmitButton.classList.remove("popup__save-button_disabled");
+    addPopupSubmitButton.disabled = false;
     popupName.value = profile.name;
     popupTitle.value = profile.title;
     openPopup(profileEditor);
@@ -100,6 +101,8 @@ function addPlace(title, link) {
 
 function savePlace(evt) {
     evt.preventDefault();
+    popupSubmitButton.classList.add("popup__save-button_disabled");
+    popupSubmitButton.disabled = true;
     addPlace(popupImageTitle.value, popupImageLink.value);
     closePopup();
 }
@@ -115,6 +118,7 @@ function saveProfile(evt) {
 function closePopup() {
     const openPopup = document.querySelector(".popup_opened");
     openPopup.classList.remove("popup_opened");
+
     document.removeEventListener("keydown", closeWithEscape);
     document.removeEventListener("click", clickAway);
 }
