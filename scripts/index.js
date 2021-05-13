@@ -20,7 +20,7 @@ const popupImage = document.querySelector(".popup__image");
 const popupImageCaption = document.querySelector(".popup__caption");
 const addPopupSubmitButton = document.querySelector(".popup__save-button");
 const popupSubmitButton = document.querySelector(".popup__save-button_role_add");
-
+let profile = {};
 const initialCards = [
     {
         name: "Yosemite Valley",
