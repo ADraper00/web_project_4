@@ -1,5 +1,5 @@
-import Card from "./Card.js";
-import { settings, FormValidator } from "./FormValidator.js";
+import Card from "./card.js";
+import { settings, FormValidator } from "./formValidator.js";
 
 const body = document.querySelector(".page");
 const profileName = document.querySelector(".profile__name");
