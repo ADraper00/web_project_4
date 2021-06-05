@@ -1,4 +1,4 @@
-import { openPopup, imagePreview, popupImage, popupImageCaption } from "scripts/index.js";
+import { openPopup, imagePreview, popupImage, popupImageCaption } from "./index.js";
 
 class Card {
     constructor(card, templateSelector, popupHandler) {
@@ -49,4 +49,4 @@ class Card {
         return this._newPlace;
     }
 }
-export default Card;
+export Card;
