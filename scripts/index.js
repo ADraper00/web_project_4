@@ -1,4 +1,4 @@
-import Card from "./Card.js";
+import Card from "./card.js";
 import { settings, FormValidator } from "./FormValidator.js";
 
 const body = document.querySelector(".page");
