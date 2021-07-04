@@ -30,7 +30,6 @@ const placeCards = new Section(
         "#place-template"
       );
       const cardElement = newPlace.createCard();
-      addPlaceValidation.enableValidation();
       placeCards.setItems(cardElement);
     },
   },
