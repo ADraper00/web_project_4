@@ -1,23 +1,23 @@
-export default class UserInfo {
-  constructor(name, title) {
-    this._name = name;
-    this._title = title;
-    this._profileName = document.querySelector(".profile__name");
-    this._profileTitle = document.querySelector(".profile__title");
+export default class Section {
+  constructor({ items, renderer }, containerSelector) {
+    this._renderedItems = items;
+    this._renderer = renderer;
+    this._container = document.querySelector(containerSelector);
   }
 
-  getUserInfo() {
-    this._name = this._profileName.textContent;
-    this._title = this._profileTitle.textContent;
-    const data = {
-      name: this._name,
-      title: this._title,
-    };
-    return data;
+  setItems(element) {
+    this._container.append(element);
   }
 
-  setUserInfo(name, title) {
-    this._profileName.textContent = name;
-    this._profileTitle.textContent = title;
+  clear() {
+    this._container.innerHTML = "";
+  }
+
+  renderItems() {
+    this.clear();
+
+    this._renderedItems.forEach((item) => {
+      this._renderer(item);
+    });
   }
 }
