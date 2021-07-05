@@ -37,9 +37,8 @@ function createCard(item) {
     placeTemplate);
   return newPlace.generateCard();
 }
-const profileEditor = new PopupWithForm(popupProfileEditor, ({name, title }) => { 
-  userInfo.setUserInfo({name, title}); 
-  profileEditor.close(); 
+const profileEditor = new PopupWithForm((popupProfileEditor), ({ name, title }) => { 
+  userInfo.setUserInfo({ name, title });
 }); 
    
   profileEditor.setEventListeners(); 
@@ -50,15 +49,16 @@ const profileEditor = new PopupWithForm(popupProfileEditor, ({name, title }) => 
     profileValidation.toggleButtonState(); 
     profileEditor.open(); 
   })
-  const imagePreviewPopup = new PopupWithImage(popupImagePreview);  
-  
-  const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder,
-    ( name,link )  => { 
+  const imagePreviewPopup = new PopupWithImage(popupImagePreview);
+  imagePreviewPopup.setEventListeners();  
+  ///why is this invalid?
+  const imageAdderPopup = new PopupWithForm({
+    popupSelector : popupNewPlaceAdder,
+    formSubmitHandler: (item) => { 
     const cardElement = createCard(item);
     placeCards.setItems(cardElement);
-    //placeCards.renderItems(); 
-    //imageAdderPopup.close(); 
-  }); 
+    }    
+  });
    
   imageAdderPopup.setEventListeners(); 
   addButton.addEventListener("click", () => { 
