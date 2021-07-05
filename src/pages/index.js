@@ -30,15 +30,15 @@ const placeCards = new Section(
 function createCard(item) {
   const newPlace = new Card({
     item,
-    handleCardClick: ({ name,link })  => {
-        imagePreviewPopup.open({ name,link }) ;
+    handleCardClick: (name,link )  => {
+        imagePreviewPopup.open( name,link ) ;
       }
     },
     placeTemplate);
   return newPlace.generateCard();
 }
 const profileEditor = new PopupWithForm(popupProfileEditor, ({name, title }) => { 
-  userInfo.setUserInfo(name, title); 
+  userInfo.setUserInfo({name, title}); 
   profileEditor.close(); 
 }); 
    
@@ -52,11 +52,12 @@ const profileEditor = new PopupWithForm(popupProfileEditor, ({name, title }) => 
   })
   const imagePreviewPopup = new PopupWithImage(popupImagePreview);  
   
-  const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder, ({ name,link })  => { 
-  
-    initialCards.unshift({name, link }); 
-    placeCards.renderItems(); 
-    imageAdderPopup.close(); 
+  const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder,
+    ( name,link )  => { 
+    const cardElement = createCard(item);
+    placeCards.setItems(cardElement);
+    //placeCards.renderItems(); 
+    //imageAdderPopup.close(); 
   }); 
    
   imageAdderPopup.setEventListeners(); 
