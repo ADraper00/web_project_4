@@ -8,6 +8,11 @@ export const popupTitle = document.querySelector(".popup__input_role_title");
 export const addButton = document.querySelector(".profile__add-button");
 export const imageAdderForm = document.querySelector(".popup__form_role_add");
 
+export const popupProfileEditor = document.querySelector(".popup_role_edit");
+export const popupNewPlaceAdder = document.querySelector(".popup_role_add"); 
+export const popupImagePreview = document.querySelector(".popup_role_image");
+export const placeTemplate = "#place-template";
+
 export const initialCards = [
     {
         name: "Yosemite Valley",
