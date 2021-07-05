@@ -5,7 +5,7 @@ import PopupWithImage from "../components/PopupWithImage.js";
 import PopupWithForm from "../components/PopupWithForm.js";
 import UserInfo from "../components/UserInfo.js";
 import FormValidator from "../components/FormValidator.js";
-import { settings, placesContainer, editButton, profileEditorForm, addButton, imageAdderForm, profileName, profileTitle, popupName, popupTitle, initialCards, popupProfileEditor, popupNewPlaceAdder, popupImagePreview, placeTemplate } from "../utils/constants.js";
+import { settings, placesContainer, editButton, profileEditorForm, addButton, imageAdderForm, profileName, profileTitle, popupName, popupTitle, initialCards, popupProfileEditor, popupNewPlaceAdder, placeTemplate, popupImagePreview } from "../utils/constants.js";
 
 const addPlaceValidation = new FormValidator(settings, imageAdderForm); 
 const profileValidation = new FormValidator(settings, profileEditorForm); 
@@ -13,57 +13,53 @@ const profileValidation = new FormValidator(settings, profileEditorForm);
 profileValidation.enableValidation(); 
 addPlaceValidation.enableValidation(); 
 
-const imagePreviewPopup = new PopupWithImage(popupImagePreview); 
-imagePreviewPopup.setEventListeners(); 
+const userInfo = new UserInfo(profileName.textContent, profileTitle.textContent); 
 
-const cardList = new Section( 
+const placeCards = new Section( 
   { 
     items: initialCards, 
     renderer: (item) => { 
     const cardElement = createCard(item);
-    cardList.setItems(cardElement);
+    placeCards.setItems(cardElement);
     }
   },
   placesContainer );
-  cardList.renderItems();
 
-  // Create new card
+  placeCards.renderItems();
+
 function createCard(item) {
-  const card = new Card({
+  const newPlace = new Card({
     item,
-    handleCardClick: ({ name, link }) => {
-        imagePreviewPopup.open({name, link });
+    handleCardClick: ({ name,link })  => {
+        imagePreviewPopup.open({ name,link }) ;
       }
     },
     placeTemplate);
-  return card.generateCard();
+  return newPlace.generateCard();
 }
-
-  const userInfo = new UserInfo(profileName.textContent, profileTitle.textContent); 
-
-  const profileEditor = new PopupWithForm(".popup_role_edit", ({ name, title }) => { 
-    userInfo.setUserInfo(name, title); 
-    profileEditor.close(); 
-  }); 
+const profileEditor = new PopupWithForm(popupProfileEditor, ({name, title }) => { 
+  userInfo.setUserInfo(name, title); 
+  profileEditor.close(); 
+}); 
    
   profileEditor.setEventListeners(); 
-   
-  const imageAdderPopup = new PopupWithForm(".popup_role_add", ({ name, link }) => { 
-  
-    initialCards.unshift({ name, link }); 
-    placeCards.renderItems(); 
-    imageAdderPopup.close(); 
-  }); 
-   
-  imageAdderPopup.setEventListeners(); 
-
   editButton.addEventListener("click", () => { 
     const data = userInfo.getUserInfo(); 
     popupName.value = data.name; 
     popupTitle.value = data.title; 
     profileValidation.toggleButtonState(); 
     profileEditor.open(); 
-  });
+  })
+  const imagePreviewPopup = new PopupWithImage(popupImagePreview);  
+  
+  const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder, ({ name,link })  => { 
+  
+    initialCards.unshift({name, link }); 
+    placeCards.renderItems(); 
+    imageAdderPopup.close(); 
+  }); 
+   
+  imageAdderPopup.setEventListeners(); 
   addButton.addEventListener("click", () => { 
     addPlaceValidation.enableValidation(); 
     imageAdderPopup.open(); 
