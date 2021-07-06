@@ -5,63 +5,83 @@ import PopupWithImage from "../components/PopupWithImage.js";
 import PopupWithForm from "../components/PopupWithForm.js";
 import UserInfo from "../components/UserInfo.js";
 import FormValidator from "../components/FormValidator.js";
-import { settings, placesContainer, editButton, profileEditorForm, addButton, imageAdderForm, profileName, profileTitle, popupName, popupTitle, initialCards, popupProfileEditor, popupNewPlaceAdder, placeTemplate, popupImagePreview } from "../utils/constants.js";
+import {
+  settings,
+  placesContainer,
+  editButton,
+  profileEditorForm,
+  addButton,
+  imageAdderForm,
+  profileName,
+  profileTitle,
+  popupName,
+  popupTitle,
+  initialCards,
+  popupProfileEditor,
+  popupNewPlaceAdder,
+  placeTemplate,
+  popupImagePreview,
+} from "../utils/constants.js";
 
-const addPlaceValidation = new FormValidator(settings, imageAdderForm); 
-const profileValidation = new FormValidator(settings, profileEditorForm); 
- 
-profileValidation.enableValidation(); 
-addPlaceValidation.enableValidation(); 
+const addPlaceValidation = new FormValidator(settings, imageAdderForm);
+const profileValidation = new FormValidator(settings, profileEditorForm);
 
-const userInfo = new UserInfo(profileName.textContent, profileTitle.textContent); 
+profileValidation.enableValidation();
+addPlaceValidation.enableValidation();
 
-const placeCards = new Section( 
-  { 
-    items: initialCards, 
-    renderer: (item) => { 
-    const cardElement = createCard(item);
-    placeCards.setItems(cardElement);
-    }
+const userInfo = new UserInfo(profileName.textContent, profileTitle.textContent);
+
+const placeCards = new Section(
+  {
+    items: initialCards,
+    renderer: (item) => {
+      const cardElement = createCard(item);
+      placeCards.setItems(cardElement);
+    },
   },
-  placesContainer );
+  placesContainer
+);
 
-  placeCards.renderItems();
+placeCards.renderItems();
 
 function createCard(item) {
-  const newPlace = new Card({
-    item,
-    handleCardClick: (name,link )  => {
-        imagePreviewPopup.open( name,link ) ;
-      }
+  const newPlace = new Card(
+    {
+      item,
+      handleCardClick: (name, link) => {
+        imagePreviewPopup.open(name, link);
+      },
     },
-    placeTemplate);
+    placeTemplate
+  );
   return newPlace.generateCard();
 }
-const profileEditor = new PopupWithForm((popupProfileEditor), ({ name, title }) => { 
-  userInfo.setUserInfo({ name, title });
-}); 
-   
-  profileEditor.setEventListeners(); 
-  editButton.addEventListener("click", () => { 
-    const data = userInfo.getUserInfo(); 
-    popupName.value = data.name; 
-    popupTitle.value = data.title; 
-    profileValidation.toggleButtonState(); 
-    profileEditor.open(); 
-  })
-  const imagePreviewPopup = new PopupWithImage(popupImagePreview);
-  imagePreviewPopup.setEventListeners();  
-  ///why is this invalid?
-  const imageAdderPopup = new PopupWithForm({
-    popupSelector : popupNewPlaceAdder,
-    formSubmitHandler: (item) => { 
-    const cardElement = createCard(item);
-    placeCards.setItems(cardElement);
-    }    
-  });
-   
-  imageAdderPopup.setEventListeners(); 
-  addButton.addEventListener("click", () => { 
-    addPlaceValidation.enableValidation(); 
-    imageAdderPopup.open(); 
-  }); 
+
+const profileEditor = new PopupWithForm(popupProfileEditor, ({ name, title }) => {
+  userInfo.setUserInfo(name, title);
+  profileEditor.close();
+});
+
+profileEditor.setEventListeners();
+editButton.addEventListener("click", () => {
+  const data = userInfo.getUserInfo();
+  popupName.value = data.name;
+  popupTitle.value = data.title;
+  profileValidation.toggleButtonState();
+  profileEditor.open();
+});
+const imagePreviewPopup = new PopupWithImage(popupImagePreview);
+imagePreviewPopup.setEventListeners();
+
+const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder, (item) => {
+  const cardElement = createCard(item);
+  placeCards.setItems(cardElement);
+
+  imageAdderPopup.close();
+});
+
+imageAdderPopup.setEventListeners();
+addButton.addEventListener("click", () => {
+  addPlaceValidation.enableValidation();
+  imageAdderPopup.open();
+});
