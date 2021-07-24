@@ -5,14 +5,14 @@ export default class Popup {
     this._handleOverlayClose = this._handleOverlayClose.bind(this);
   }
 
-  _handleEscClose(evt) {
-    if (evt.key === "Escape") {
+  _handleEscClose(e) {
+    if (e.key === "Escape") {
       this.close();
     }
   }
 
-  _handleOverlayClose(evt) {
-    if (evt.target.classList.contains("popup_opened")) {
+  _handleOverlayClose(e) {
+    if (e.target.classList.contains("popup_opened")) {
       this.close();
     }
   }

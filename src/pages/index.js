@@ -1,36 +1,50 @@
 import "../pages/index.css";
+import Api from "../components/Api.js"
 import Card from "../components/Card.js";
 import Section from "../components/Section.js";
 import PopupWithImage from "../components/PopupWithImage.js";
 import PopupWithForm from "../components/PopupWithForm.js";
+import PopupDelete from "../components/PopupDelete.js";
 import UserInfo from "../components/UserInfo.js";
 import FormValidator from "../components/FormValidator.js";
-import {
-  settings,
-  placesContainer,
-  editButton,
-  profileEditorForm,
-  addButton,
-  imageAdderForm,
-  profileName,
-  profileTitle,
-  popupName,
-  popupTitle,
-  initialCards,
-  popupProfileEditor,
-  popupNewPlaceAdder,
-  placeTemplate,
-  popupImagePreview,
+import { initialCards, placesContainerSelector, editButton, profileEditorForm, avatarUpdateForm, avatarButton, addButton, imageAdderForm, popupName, popupTitle, settings, profileNameElement, profileAboutElement, profileAvatarElement 
 } from "../utils/constants.js";
+
+const api = new Api({
+  baseUrl: 'https://around.nomoreparties.co/v1/group-12',
+  authorization: "9b815c88-30e1-42fa-b363-04c78bf0d633",
+});
 
 const addPlaceValidation = new FormValidator(settings, imageAdderForm);
 const profileValidation = new FormValidator(settings, profileEditorForm);
+const avatarValidation = new FormValidator(settings, avatarUpdateForm);
 
 profileValidation.enableValidation();
 addPlaceValidation.enableValidation();
+avatarValidation.enableValidation();
 
-const userInfo = new UserInfo(profileName.textContent, profileTitle.textContent);
 
+
+const userInfo = new UserInfo({
+  nameElement: profileNameElement,
+  aboutElement: profileAboutElement,
+  avatarElement: profileAvatarElement,
+});
+
+const confirmDeletePopup = new PopupDelete({
+  popupSelector: '.popup_role_delete',
+  formSubmitHandler: (cardElement, cardId) => {
+    api
+      .deleteCard(cardId)
+      .then(() => {
+        cardElement.remove();
+        confirmDeletePopup.close();
+      })
+      .catch(err => console.error(`Problem deleting card: ${err}`));
+  },
+});
+
+api.getPlaceCards().then(res => {
 const placeCards = new Section(
   {
     items: initialCards,
@@ -39,10 +53,11 @@ const placeCards = new Section(
       placeCards.setItems(cardElement);
     },
   },
-  placesContainer
+  placesContainerSelector
 );
 
 placeCards.renderItems();
+})
 
 function createCard(item) {
   const newPlace = new Card(
@@ -57,31 +72,142 @@ function createCard(item) {
   return newPlace.generateCard();
 }
 
-const profileEditor = new PopupWithForm(popupProfileEditor, ({ name, title }) => {
-  userInfo.setUserInfo(name, title);
-  profileEditor.close();
+
+
+
+
+
+
+// const createNewCard = function (item) {
+//   return new Card({
+//     card: item,
+//     handleCardClick: (name, link) => {
+//       imagePreviewPopup.open(name, link);
+//     },
+//     handleDeleteClick: evt => {
+//       confirmDeletePopup.open(evt, item._id);
+//     },
+//     userData: userInfo.getUserInfo(),
+//     handleLikeCard: status => {
+//       return status ? api.likeCard(item._id) : api.removeLike(item._id);
+//     },
+//     templateSelector: '#place-template',
+//   });
+// };
+ 
+//   const placeCards = new Section({
+  
+//      renderer: item => {
+//         const newCard = createNewCard(item);
+//         placeCards.setItems(newCard.createCard());
+//       },
+//       containerSelector: placesContainerSelector,
+
+//     })
+
+// initialize image preview popup
+const imagePreviewPopup = new PopupWithImage('.popup_role_image');
+
+// initialize profile editor popup
+const profileEditor = new PopupWithForm({
+  popupSelector: '.popup_role_edit',
+  formSubmitHandler: data => {
+    api
+      .updateProfile(data)
+      .then(() => {
+        userInfo.updateUserInfo(data);
+        userInfo.renderUserInfo();
+        profileEditor.close();
+      })
+      .catch(err => console.error(`Problem updating profile: ${err}`));
+  },
 });
 
+// initialize image adder editor popup
+const imageAdderPopup = new PopupWithForm({
+  popupSelector: '.popup_role_add',
+  formSubmitHandler: data => {
+    api
+      .addCard(data)
+      .then(cardData => {
+        const newCard = createNewCard(cardData);
+        placeCards.setItems(newCard.createCard());
+      })
+      .then(() => imageAdderPopup.close())
+      .catch(err => console.error(`Problem adding card: ${err}`));
+  },
+});
+
+// initialize  avatar update popup
+const avatarUpdatePopup = new PopupWithForm({
+  popupSelector: '.popup_role_avatar',
+  formSubmitHandler: data => {
+    userInfo.removeAvatar(); // displays loading effect while server responds
+    api
+      .updateAvatar(data)
+      .then(() => {
+        userInfo.updateUserInfo(data);
+        userInfo.renderUserInfo();
+        avatarUpdatePopup.close();
+      })
+      .catch(err => console.error(`Problem updating avatar: ${err}`));
+  },
+});
+
+
+confirmDeletePopup.setEventListeners();
+imagePreviewPopup.setEventListeners();
 profileEditor.setEventListeners();
-editButton.addEventListener("click", () => {
-  const data = userInfo.getUserInfo();
-  popupName.value = data.name;
-  popupTitle.value = data.title;
+imageAdderPopup.setEventListeners();
+avatarUpdatePopup.setEventListeners();
+
+// set event listeners to page buttons
+editButton.addEventListener('click', () => {
+  const { name, about } = userInfo.getUserInfo();
+  popupName.value = name;
+  popupTitle.value = about;
   profileValidation.toggleButtonState();
   profileEditor.open();
 });
-const imagePreviewPopup = new PopupWithImage(popupImagePreview);
-imagePreviewPopup.setEventListeners();
 
-const imageAdderPopup = new PopupWithForm(popupNewPlaceAdder, (item) => {
-  const cardElement = createCard(item);
-  placeCards.setItems(cardElement);
-
-  imageAdderPopup.close();
-});
-
-imageAdderPopup.setEventListeners();
-addButton.addEventListener("click", () => {
-  addPlaceValidation.enableValidation();
+addButton.addEventListener('click', () => {
   imageAdderPopup.open();
+  addPlaceValidation.toggleButtonState();
 });
+
+avatarButton.addEventListener('click', () => {
+  avatarUpdatePopup.open();
+  avatarValidation.toggleButtonState();
+});
+
+api
+  // fetch and store user data
+  .getUserInfo()
+  .then(userData => {
+    userInfo.updateUserInfo(userData);
+  })
+  // fetch and render group cards
+  .then((res) => {
+    api.getGroupCards()
+    .then(fetchedCards => {
+      placeCards.renderItems(fetchedCards.reverse());
+    });
+  })
+ 
+  .then(() => {
+    userInfo.renderUserInfo(); 
+   })
+  .catch(err => console.error(`Problem rendering content: ${err}`));
+
+
+//  Promise.all([api.getUserInfo(), api.getGroupCards()])
+//   .then(res => {
+//     const [userData, initialCards] = res;
+//     console.log(userData);
+//     console.log(initialCards);
+
+//     .then( fetchedCards, res => {
+//       placeCards.renderItems(fetchedCards.reverse());
+//    userInfo.renderUserInfo();
+//   });
+//  .catch(err => console.error(`Problem rendering content: ${err}`));

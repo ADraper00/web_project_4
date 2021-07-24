@@ -2,7 +2,7 @@ export default class FormValidator {
   constructor(settings, formElement) {
     this._input = settings.inputSelector;
     this._submitButtonSelector = settings.submitButtonSelector;
-    this._inactiveButtonClass = settings.inactiveButtonClass;
+    this._inactiveButton = settings.inactiveButtonClass;
     this._inputErrorClass = settings.inputErrorClass;
     this._errorClass = settings.errorClass;
     this._form = formElement;
@@ -20,7 +20,7 @@ export default class FormValidator {
   _hideInputError(inputElement) {
     const errorElement = this._form.querySelector(`.popup__input-error_${inputElement.id}`);
     inputElement.classList.remove(this._inputErrorClass);
-    errorElement.textContent = "";
+    errorElement.textContent = '';
     errorElement.classList.remove(this._errorClass);
   }
 
@@ -35,8 +35,8 @@ export default class FormValidator {
   _setEventListeners() {
     this.toggleButtonState();
 
-    this._inputList.forEach((inputElement) => {
-      inputElement.addEventListener("input", () => {
+    this._inputList.forEach(inputElement => {
+      inputElement.addEventListener('input', () => {
         this._checkInputValidity(inputElement);
         this.toggleButtonState();
       });
@@ -44,24 +44,24 @@ export default class FormValidator {
   }
 
   _hasInvalidInput(inputList) {
-    return inputList.some((input) => {
+    return inputList.some(input => {
       return !input.validity.valid;
     });
   }
 
   toggleButtonState() {
     if (this._hasInvalidInput(this._inputList)) {
-      this._submitButton.classList.add(this._inactiveButtonClass);
+      this._submitButton.classList.add(this._inactiveButton);
       this._submitButton.disabled = true;
     } else {
-      this._submitButton.classList.remove(this._inactiveButtonClass);
+      this._submitButton.classList.remove(this._inactiveButton);
       this._submitButton.disabled = false;
     }
   }
 
   enableValidation() {
-    this._form.addEventListener("submit", (evt) => {
-      evt.preventDefault();
+    this._form.addEventListener('submit', e => {
+      e.preventDefault();
     });
     this._setEventListeners();
   }

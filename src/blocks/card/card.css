@@ -4,6 +4,9 @@
 @import url(./__title/card__title.css);
 @import url(./__heart/_liked/card__heart_liked.css);
 @import url(./__delete/card__delete.css);
+@import url(./__like-container/.card__like-container);
+@import url(./__likes/card__likes.css);
+
 
 .card {
   background-color: #ffffff;

@@ -14,20 +14,21 @@
         <main class="content">
             <section class="profile">
                 <div class="profile__info-box">
-                    <img src="<%=require('./images/jacques.jpg')%>" alt="Jacques Cousteau" class="profile__avatar" />
+                    <div class="profile__avatar-wrapper">
+                        <img id="avatar" alt="" class="profile__avatar" />
+                        <div class="profile__avatar-overlay"></div>
+                    </div>
                     <div class="profile__text">
                         <div class="profile__text-container">
-                            <h1 class="profile__name">Jacques Cousteau</h1>
-                            <button type="button" class="profile__edit-button" aria-label="Edit profile"></button>
+                            <h1 class="profile__name"></h1>
+                            <button type="button" name="Edit profile" class="profile__edit-button" aria-label="Edit profile"></button>
                         </div>
-                        <p class="profile__title">Explorer</p>
+                        <p class="profile__title"></p>
                     </div>
                 </div>
-                <button type="button" class="profile__add-button" aria-label="Add image"></button>
+                <button type="button" name="Add image" class="profile__add-button" aria-label="Add image"></button>
             </section>
-
-            <section class="cards">
-            </section>
+            <section class="cards"></section>
         </main>
 
         <footer class="footer">
@@ -36,13 +37,13 @@
 
         <div class="popup popup_role_edit">
             <div class="popup__container">
-                <form action="#" name="UpdateProfile" method="post" class="popup__form popup__form_role_edit" novalidate>
+                <form action="#" name="Profile" method="post" class="popup__form popup__form_role_edit" novalidate>
                     <h3 class="popup__header">Edit Profile</h3>
                     <div class="popup__input-container">
-                        <input type="text" id="name" name="name" placeholder="Name" class="popup__input popup__input_role_name" required minlength="2" maxlength="40"  />
+                        <input type="text" id="name" placeholder="Name" name="name" class="popup__input popup__input_role_name" required minlength="2" maxlength="40" />
                         <span class="popup__input-error popup__input-error_name"></span>
 
-                        <input type="text" id="title" name="title" placeholder="Title" class="popup__input popup__input_role_title" required minlength="2" maxlength="200" />
+                        <input type="text" id="title" name="about" placeholder="Title" class="popup__input popup__input_role_title" required minlength="2" maxlength="200" />
                         <span class="popup__input-error popup__input-error_title"></span>
                     </div>
 
@@ -82,17 +83,46 @@
                 <button type="button" class="popup__close popup__close_role_image" aria-label="Close"></button>
             </div>
         </div>
+        <div class="popup popup_role_avatar">
+            <div class="popup__container">
+                <form action="#" name="avatar" class="popup__form popup__form_role_avatar" novalidate>
+                    <h2 class="popup__header">Change profile picture</h2>
+                    <div class="popup__input-container popup__input-container_role_avatar">
+                        <input type="url" id="avatar-url" name="avatar" placeholder="Image link" class="popup__input popup__input_role_image-link" required />
+                        <span class="popup__input-error popup__input-error_avatar-url"></span>
+                    </div>
+                    <button type="submit" class="popup__save-button popup__save-button_role_avatar">
+                        Save
+                    </button>
+                </form>
+                <button type="button" class="popup__close popup__close_role_avatar" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="popup popup_role_delete">
+            <div class="popup__container">
+                <form action="#" name="place" class="popup__form popup__form_role_delete" novalidate>
+                    <h2 class="popup__header">Are you sure?</h2>
+
+                    <button type="submit" class="popup__save-button popup__save-button_role_delete">
+                        Yes
+                    </button>
+                </form>
+                <button type="button" class="popup__close popup__close_role_delete" aria-label="Close"></button>
+            </div>
+        </div>
 
         <template id="place-template" class="place-template">
             <article class="card">
-                <img class="card__image" src="#" alt="#" />
+                <img class="card__image" src="#" alt="" />
                 <div class="card__content">
                     <h2 class="card__title"></h2>
-                    <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+                    <div class="card__like-container">
+                        <button type="button" name="Like image" class="card__heart" aria-label="Like photo"></button>
+                        <p class="card__likes">0</p>
+                    </div>
                 </div>
                 <button type="button" name="Delete image" class="card__delete" aria-label="Delete photo"></button>
             </article>
         </template>
-    
     </body>
 </html>
