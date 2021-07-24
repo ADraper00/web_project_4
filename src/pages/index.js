@@ -23,8 +23,6 @@ profileValidation.enableValidation();
 addPlaceValidation.enableValidation();
 avatarValidation.enableValidation();
 
-
-
 const userInfo = new UserInfo({
   nameElement: profileNameElement,
   aboutElement: profileAboutElement,
@@ -44,66 +42,32 @@ const confirmDeletePopup = new PopupDelete({
   },
 });
 
-api.getPlaceCards().then(res => {
-const placeCards = new Section(
-  {
-    items: initialCards,
-    renderer: (item) => {
-      const cardElement = createCard(item);
-      placeCards.setItems(cardElement);
+const createNewCard = function (item) {
+  return new Card({
+    card: item,
+    handleCardClick: (name, link) => {
+      imagePreviewPopup.open(name, link);
     },
-  },
-  placesContainerSelector
-);
-
-placeCards.renderItems();
-})
-
-function createCard(item) {
-  const newPlace = new Card(
-    {
-      item,
-      handleCardClick: (name, link) => {
-        imagePreviewPopup.open(name, link);
-      },
+    handleDeleteClick: evt => {
+      confirmDeletePopup.open(evt, item._id);
     },
-    placeTemplate
-  );
-  return newPlace.generateCard();
-}
-
-
-
-
-
-
-
-// const createNewCard = function (item) {
-//   return new Card({
-//     card: item,
-//     handleCardClick: (name, link) => {
-//       imagePreviewPopup.open(name, link);
-//     },
-//     handleDeleteClick: evt => {
-//       confirmDeletePopup.open(evt, item._id);
-//     },
-//     userData: userInfo.getUserInfo(),
-//     handleLikeCard: status => {
-//       return status ? api.likeCard(item._id) : api.removeLike(item._id);
-//     },
-//     templateSelector: '#place-template',
-//   });
-// };
+    userData: userInfo.getUserInfo(),
+    handleLikeCard: status => {
+      return status ? api.likeCard(item._id) : api.removeLike(item._id);
+    },
+    templateSelector: '#place-template',
+  });
+};
  
-//   const placeCards = new Section({
+  const placeCards = new Section({
   
-//      renderer: item => {
-//         const newCard = createNewCard(item);
-//         placeCards.setItems(newCard.createCard());
-//       },
-//       containerSelector: placesContainerSelector,
+     renderer: item => {
+        const newCard = createNewCard(item);
+        placeCards.setItems(newCard.createCard());
+      },
+      containerSelector: placesContainerSelector,
 
-//     })
+    })
 
 // initialize image preview popup
 const imagePreviewPopup = new PopupWithImage('.popup_role_image');
@@ -180,13 +144,13 @@ avatarButton.addEventListener('click', () => {
   avatarValidation.toggleButtonState();
 });
 
-api
-  // fetch and store user data
-  .getUserInfo()
+
+ 
+  api.getUserInfo()
   .then(userData => {
     userInfo.updateUserInfo(userData);
   })
-  // fetch and render group cards
+  
   .then((res) => {
     api.getGroupCards()
     .then(fetchedCards => {
@@ -198,16 +162,3 @@ api
     userInfo.renderUserInfo(); 
    })
   .catch(err => console.error(`Problem rendering content: ${err}`));
-
-
-//  Promise.all([api.getUserInfo(), api.getGroupCards()])
-//   .then(res => {
-//     const [userData, initialCards] = res;
-//     console.log(userData);
-//     console.log(initialCards);
-
-//     .then( fetchedCards, res => {
-//       placeCards.renderItems(fetchedCards.reverse());
-//    userInfo.renderUserInfo();
-//   });
-//  .catch(err => console.error(`Problem rendering content: ${err}`));
