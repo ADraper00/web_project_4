@@ -23,22 +23,12 @@ export default class Api {
   }
 
   getGroupCards() {
-      return (
-          fetch(this._baseUrl + "/cards", {
-              headers: {
-                  authorization: this._auth,
-              },
-          })
-              .then((res) => (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`)))
-              // .then(res =>{
-              //   console.log("!!!!!", res)
-              // })
-              .catch((err) => {
-                  console.log(err);
-              })
-      );
+    return fetch(this._baseUrl + '/cards', {
+      headers: {
+        authorization: this._auth,
+      },
+    }).then(res => this._checkResponse(res));
   }
-  
   updateProfile({ name, about }) {
       return fetch(this._baseUrl + "/users/me", {
           method: "PATCH",
