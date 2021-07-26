@@ -1,22 +1,21 @@
 export default class Section {
-  constructor({ renderer, containerSelector }) {
-    this._renderer = renderer;
-    this._container = document.querySelector(containerSelector);
-  }
+    constructor({ items, renderer }, containerSelector) {
+        this._renderedItems = items;
+        this._renderer = renderer;
+        this._container = document.querySelector(containerSelector);
+    }
 
-  setItems(card) {
-    this._container.prepend(card);
-  }
+    renderItems() {
+        this._renderedItems.forEach(item => this._renderer(item));
+    }
 
-  clear() {
-    this._container.innerHTML = '';
-  }
+    // Prepend newly created cards
+    addNewItem(element) {
+        this._container.prepend(element);
+    }
 
-  renderItems(items) {
-    this.clear();
-
-    items.forEach(item => {
-      this._renderer(item);
-    });
-  }
+    // Append loaded cards from server
+    addItem(element) {
+        this._container.append(element);
+    }
 }

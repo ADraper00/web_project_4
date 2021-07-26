@@ -1,164 +1,195 @@
-import "../pages/index.css";
-import Api from "../components/Api.js"
+import "./index.css";
+import Api from "../components/Api.js";
+import FormValidator from "../components/FormValidator.js";
 import Card from "../components/Card.js";
 import Section from "../components/Section.js";
 import PopupWithImage from "../components/PopupWithImage.js";
 import PopupWithForm from "../components/PopupWithForm.js";
-import PopupDelete from "../components/PopupDelete.js";
+import PopupWithSubmit from "../components/PopupWithSubmit.js";
 import UserInfo from "../components/UserInfo.js";
-import FormValidator from "../components/FormValidator.js";
-import { initialCards, placesContainerSelector, editButton, profileEditorForm, avatarUpdateForm, avatarButton, addButton, imageAdderForm, popupName, popupTitle, settings, profileNameElement, profileAboutElement, profileAvatarElement 
-} from "../utils/constants.js";
+import { initialCards, settings, editButton, editForm, addImgButton, addImgForm, nameInput, jobInput, profileName, profileJob, popupEditProfile, popupAddImage, popupLargeImage, cardTemplate, imageGrid, popupChangeAvatar, profileImage, avatarForm, profileImageOverlay, popupDeleteImage } from "../utils/constants.js"
+
+const profileValidator = new FormValidator(settings, editForm);
+const imageValidator = new FormValidator(settings, addImgForm);
+const profileImageValidator = new FormValidator(settings, avatarForm);
+
+// Apply enableValidation method on forms
+profileValidator.enableValidation();
+imageValidator.enableValidation();
+profileImageValidator.enableValidation();
+
 
 const api = new Api({
-  baseUrl: 'https://around.nomoreparties.co/v1/group-12',
+  baseUrl: "https://around.nomoreparties.co/v1/group-12",
+  headers: {
   authorization: "9b815c88-30e1-42fa-b363-04c78bf0d633",
+  "Content-Type": "application/json"
+  }
 });
 
-const addPlaceValidation = new FormValidator(settings, imageAdderForm);
-const profileValidation = new FormValidator(settings, profileEditorForm);
-const avatarValidation = new FormValidator(settings, avatarUpdateForm);
-
-profileValidation.enableValidation();
-addPlaceValidation.enableValidation();
-avatarValidation.enableValidation();
-
-const userInfo = new UserInfo({
-  nameElement: profileNameElement,
-  aboutElement: profileAboutElement,
-  avatarElement: profileAvatarElement,
+const userInfo = new UserInfo ({
+  nameSelector: profileName,
+  jobSelector: profileJob,
+  avatar: profileImage
 });
 
-const confirmDeletePopup = new PopupDelete({
-  popupSelector: '.popup_role_delete',
-  formSubmitHandler: (cardElement, cardId) => {
-    api
-      .deleteCard(cardId)
-      .then(() => {
-        cardElement.remove();
-        confirmDeletePopup.close();
-      })
-      .catch(err => console.error(`Problem deleting card: ${err}`));
-  },
-});
+Promise.all([api.getUserInfo(), api.getInitialCards()])
+  .then(res => {
+    const [userValues, initialCards] = res;
+    console.log(userValues);
+    console.log(initialCards);
 
-const createNewCard = function (item) {
-  return new Card({
-    card: item,
-    handleCardClick: (name, link) => {
-      imagePreviewPopup.open(name, link);
-    },
-    handleDeleteClick: evt => {
-      confirmDeletePopup.open(evt, item._id);
-    },
-    userData: userInfo.getUserInfo(),
-    handleLikeCard: status => {
-      return status ? api.likeCard(item._id) : api.removeLike(item._id);
-    },
-    templateSelector: '#place-template',
-  });
-};
- 
-  const placeCards = new Section({
-  
-     renderer: item => {
-        const newCard = createNewCard(item);
-        placeCards.setItems(newCard.createCard());
-      },
-      containerSelector: placesContainerSelector,
-
+    // Get userInfo from server and display on page
+    userInfo.setUserInfo({ username: userValues.name, userjob: userValues.about });
+    userInfo.changeAvatar({ link: userValues.avatar })
+    userInfo.userId = userValues._id;
+    
+    // Get cards array from server and render/display on page
+    const cardList = new Section({
+      items: initialCards,
+      renderer: (data) => { 
+         
+          const cardElement = createCard(data);      
+          cardList.addItem(cardElement);
+        
+      }
+    }, imageGrid);
+    cardList.renderItems();
+    
+    // Popup form to create new card and save data on server
+    const addImagePopup = new PopupWithForm({
+      popupSelector: popupAddImage,
+      handleFormSubmit: (data) => {
+        api.addCard(data)
+        .then(cardData => {
+          console.log(cardData);
+          const cardElement = createCard(cardData);
+          cardList.addNewItem(cardElement);
+          addImagePopup.close();
+        })
+        .catch((err) => {
+          console.log(err); // Log error to console
+        })
+        .finally(() => {
+          addImagePopup.renderLoading(false);
+        })    
+      }
+    });  
+    addImagePopup.setEventListeners();
+    
+    // Open popup with form; input fields and validation messages are being reset
+    addImgButton.addEventListener("click", () => { 
+      addImagePopup.open();
+      imageValidator.resetValidation();
     })
-
-// initialize image preview popup
-const imagePreviewPopup = new PopupWithImage('.popup_role_image');
-
-// initialize profile editor popup
-const profileEditor = new PopupWithForm({
-  popupSelector: '.popup_role_edit',
-  formSubmitHandler: data => {
-    api
-      .updateProfile(data)
-      .then(() => {
-        userInfo.updateUserInfo(data);
-        userInfo.renderUserInfo();
-        profileEditor.close();
-      })
-      .catch(err => console.error(`Problem updating profile: ${err}`));
-  },
-});
-
-// initialize image adder editor popup
-const imageAdderPopup = new PopupWithForm({
-  popupSelector: '.popup_role_add',
-  formSubmitHandler: data => {
-    api
-      .addCard(data)
-      .then(cardData => {
-        const newCard = createNewCard(cardData);
-        placeCards.setItems(newCard.createCard());
-      })
-      .then(() => imageAdderPopup.close())
-      .catch(err => console.error(`Problem adding card: ${err}`));
-  },
-});
-
-// initialize  avatar update popup
-const avatarUpdatePopup = new PopupWithForm({
-  popupSelector: '.popup_role_avatar',
-  formSubmitHandler: data => {
-    userInfo.removeAvatar(); // displays loading effect while server responds
-    api
-      .updateAvatar(data)
-      .then(() => {
-        userInfo.updateUserInfo(data);
-        userInfo.renderUserInfo();
-        avatarUpdatePopup.close();
-      })
-      .catch(err => console.error(`Problem updating avatar: ${err}`));
-  },
-});
-
-
-confirmDeletePopup.setEventListeners();
-imagePreviewPopup.setEventListeners();
-profileEditor.setEventListeners();
-imageAdderPopup.setEventListeners();
-avatarUpdatePopup.setEventListeners();
-
-// set event listeners to page buttons
-editButton.addEventListener('click', () => {
-  const { name, about } = userInfo.getUserInfo();
-  popupName.value = name;
-  popupTitle.value = about;
-  profileValidation.toggleButtonState();
-  profileEditor.open();
-});
-
-addButton.addEventListener('click', () => {
-  imageAdderPopup.open();
-  addPlaceValidation.toggleButtonState();
-});
-
-avatarButton.addEventListener('click', () => {
-  avatarUpdatePopup.open();
-  avatarValidation.toggleButtonState();
-});
-
-
- 
-  api.getUserInfo()
-  .then(userData => {
-    userInfo.updateUserInfo(userData);
   })
-  
-  .then((res) => {
-    api.getGroupCards()
-    .then(fetchedCards => {
-      placeCards.renderItems(fetchedCards.reverse());
-    });
+  .catch((err) => {
+    console.log(err);
+  });
+
+// Create new card
+function createCard(data) {
+  const card = new Card({
+    data, // Open large image popup when clicking on card
+    handleCardClick: ({ name,link }) => {
+        imagePopup.open({ name, link });
+      }, // Open delete popup when clicking on trash icon, set submit handler to remove card
+      handleDeleteClick: (data) => {
+        deleteImagePopup.open();
+        deleteImagePopup.setSubmitAction(() => {
+          api.removeCard(data._id)
+          .then(() => {
+            card.deleteImage();
+            deleteImagePopup.close();
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+        })
+      }, // Add like to array
+      handleAddLike: (data) => {
+        api.addLike(data._id)
+        .then(res => {
+          card.updateLikes(res.likes);
+        })
+        .catch((err) => {
+          console.log(err);
+      })
+      }, // Remove like from array
+      handleRemoveLike: (data) => {
+        api.removeLike(data._id)
+        .then(res => {
+          card.updateLikes(res.likes);
+        })
+        .catch((err) => {
+          console.log(err);
+      })
+      }, // pass userId
+      userId: userInfo.userId,
+    },
+    cardTemplate);
+  return card.generateCard();
+}
+
+// Form to edit profile details and save data on server
+const editFormPopup = new PopupWithForm({
+  popupSelector: popupEditProfile,
+  handleFormSubmit: (data) => {
+    api.setUserInfo({ name: data.username, about: data.userjob })
+    .then(() => {
+      userInfo.setUserInfo({ username: data.username, userjob: data.userjob });
+      editFormPopup.close();
+    })
+    .catch((err) => {
+      console.log(err); // Log error to console
+    })
+    .finally(() => {
+      editFormPopup.renderLoading(false);
+    })
+  }
+});
+editFormPopup.setEventListeners();
+
+// Open edit profile form, display corresponding data in input fields
+// Reset form input fields and validation messages on opening
+editButton.addEventListener("click", () => {
+  const userData = userInfo.getUserInfo();
+  nameInput.value = userData.userName;
+  jobInput.value = userData.userJob;
+  editFormPopup.open();
+  profileValidator.resetValidation(); 
+})
+
+// Popup to confirm if image has to be deleted
+const deleteImagePopup = new PopupWithSubmit({
+  popupSelector: popupDeleteImage
+});
+deleteImagePopup.setEventListeners();
+
+//Image popup
+const imagePopup = new PopupWithImage(popupLargeImage);
+imagePopup.setEventListeners();
+
+// Form to change profile image and save data on server
+const profileImagePopup = new PopupWithForm({
+  popupSelector: popupChangeAvatar,
+  handleFormSubmit: (data) => {
+    api.setUserAvatar({ avatar: data.link })
+       .then(() => {
+         userInfo.changeAvatar(data);
+         profileImagePopup.close();  
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        profileImagePopup.renderLoading(false);
+      }) 
+    }
   })
- 
-  .then(() => {
-    userInfo.renderUserInfo(); 
-   })
-  .catch(err => console.error(`Problem rendering content: ${err}`));
+profileImagePopup.setEventListeners();
+
+profileImageOverlay.addEventListener("click", () => {
+  profileImagePopup.open();
+  profileImageValidator.resetValidation();
+});
