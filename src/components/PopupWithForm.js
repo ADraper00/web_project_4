@@ -1,43 +1,35 @@
 import Popup from "./Popup.js";
 
 export default class PopupWithForm extends Popup {
-    constructor({ popupSelector, handleFormSubmit }) {
+    constructor({ popupSelector, formSubmitHandler }) {
         super(popupSelector);
-        this._handleFormSubmit = handleFormSubmit;
-        this._form = this._popupElement.querySelector(".popup__form-main");
-        this._submitButton = this._popupElement.querySelector(".popup__submit-button");
-        this._buttonText = this._popupElement.querySelector(".popup__submit-button").textContent;
-        this._inputList = this._popupElement.querySelectorAll(".popup__input");
+        this._form = this._popup.querySelector(".popup__form");
+        this._button = this._popup.querySelector(".popup__save-button");
+        this._formSubmitHandler = formSubmitHandler;
     }
-
     _getInputValues() {
-        this._formValues = {};
-        
-        this._inputList.forEach(input => this._formValues[input.name] = input.value);
-        
-        return this._formValues;
+        const inputList = Array.from(this._popup.querySelectorAll(".popup__input"));
+        const data = {};
+        inputList.forEach((input) => {
+            data[input.name] = input.value;
+        });
+        return data;
+    }
+    open() {
+        super.open();
+        this._button.textContent = "Save";
     }
 
+    setEventListeners() {
+        super.setEventListeners();
+        this._form.addEventListener("submit", (evt) => {
+            evt.preventDefault();
+            this._button.textContent = "Saving...";
+            this._formSubmitHandler(this._getInputValues());
+        });
+    }
     close() {
         super.close();
         this._form.reset();
     }
-
-    renderLoading(isLoading) {
-        if(isLoading) {
-          this._submitButton.textContent = "Saving...";
-        } else {
-          this._submitButton.textContent = this._buttonText;
-        }
-      }
-
-    setEventListeners() {
-        super.setEventListeners();
-        
-        this._form.addEventListener("submit", (evt) => {
-            evt.preventDefault();
-            this.renderLoading(true);       
-            this._handleFormSubmit(this._getInputValues());
-        })       
-    }   
 }

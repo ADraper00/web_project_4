@@ -1,0 +1,24 @@
+@import url(./_disabled/popup__save-button_disabled.css);
+
+.popup__save-button {
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 22px;
+  background-color: #000;
+  border-radius: 2px;
+  border: none;
+  min-height: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.popup__save-button:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  .popup__save-button {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}

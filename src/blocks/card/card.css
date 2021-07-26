@@ -1,13 +1,17 @@
-@import url(./__delete/card__delete.css);
+@import url(./__heart/card__heart.css);
 @import url(./__image/card__image.css);
-@import url(./__textblock/card__textblock.css);
+@import url(./__content/card__content.css);
 @import url(./__title/card__title.css);
-@import url(./__heart-icon/card__heart-icon.css);
-@import url(./card__likes-container/card__likes-container.css);
-@import url(./__likes-counter/card__likes-counter.css);
+@import url(./__heart/_liked/card__heart_liked.css);
+@import url(./__delete/card__delete.css);
+@import url(./__like-container/.card__like-container);
+@import url(./__likes/card__likes.css);
+
 
 .card {
+  background-color: #ffffff;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
-  background-color: white;
+  overflow: hidden;
   position: relative;
 }
